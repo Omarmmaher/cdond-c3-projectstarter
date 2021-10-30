@@ -87,7 +87,7 @@ jobs:
              npm run test
              exit 1
       - store_test_results:
-          path: $CIRCLE_WORKING_DIRECTORY/BE_test-results       
+          path: $CIRCLE_WORKING_DIRECTORY/FE_test-results       
       - save_cache:
           paths: [frontend/node_modules]
           key: testfrontend-build
