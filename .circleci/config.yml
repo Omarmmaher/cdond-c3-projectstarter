@@ -2,17 +2,29 @@ version: 2.1
 orbs:
   slack: circleci/slack@4.4.4
 commands:
- # destroy-environment:
- #   description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
- #   parameters:
- #     # Add parameter here   
- #   steps:
- #     - run:
- #         name: Destroy environments
- #         when: on_fail
- #         command: |
- #           # Your code here
- #           exit 1
+  destroy_environment:
+    description: Destroy Cloud Formation Stacks and infrastructure
+    parameters:
+      when:
+        type: string
+      id:
+        type: string
+    steps:
+      - run:
+          name: Destroy udapeople backend cfn stack
+          command: |
+            aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.id >>
+          environment:
+            TERM: xterm-256color
+          when: << parameters.when >>
+      - run:
+          name: Destroy udapeople frontend cfn stack and S3 bucket
+          command: |
+            aws s3 rm s3://udapeople-<< parameters.id >> --recursive
+            aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.id >>
+          environment:
+              TERM: xterm-256color
+          when: << parameters.when >>
  #
  # revert-migrations:
  #   description: Revert the last migration if successfully run in the current workflow.
@@ -158,7 +170,7 @@ jobs:
 #
   deploy-infrastructure:
     docker:
-      - image: amazon/aws-cli
+      amazon/aws-cli
     steps:
       # Checkout code from git
       - checkout
