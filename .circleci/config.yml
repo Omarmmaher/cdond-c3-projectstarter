@@ -45,9 +45,10 @@ jobs:
           command: |
             # Your code here
              cd frontend
-             npm install
-             npm run build
-             npm audit fix --force
+             # npm install
+             # npm run build
+             # npm audit fix --force
+             npm update
              exit 1
       - save_cache:
           paths: [frontend/node_modules]
