@@ -45,8 +45,8 @@ jobs:
           command: |
             # Your code here
              cd frontend
-             # npm install
-             # npm run build
+              npm install
+              npm run build
              # npm audit fix --force
              #npm update
              npm audit fix
