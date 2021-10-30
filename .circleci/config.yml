@@ -74,11 +74,7 @@ jobs:
   test-frontend:
    docker:
       - image: circleci/node:13.8.0
-      # Docker image here
     steps:
-      # Checkout code from git
-      # Restore from cache
-      # Your job code here
       - checkout
       - restore_cache:
           keys: [testfrontend-build]
@@ -97,11 +93,7 @@ jobs:
   test-backend:
    docker:
       - image: circleci/node:13.8.0
-      # Docker image here
     steps:
-      # Checkout code from git
-      # Restore from cache
-      # Your job code here
       - checkout
       - restore_cache:
           keys: [testbackend-build]
