@@ -44,12 +44,9 @@ jobs:
           name: Build front-end
           command: |
             # Your code here
-             cd frontend
+              cd frontend
               npm install
               npm run build
-             # npm audit fix --force
-             #npm update
-            # npm audit fix --force
              exit 1
       - save_cache:
           paths: [frontend/node_modules]
@@ -69,27 +66,56 @@ jobs:
              cd backend
              npm install
              npm run build
-             npm fund
              exit 1
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
-#
-#  test-frontend:
-#    docker:
-#      # Docker image here
-#    steps:
-#      # Checkout code from git
-#      # Restore from cache
-#      # Your job code here
+
+  test-frontend:
+   docker:
+      - image: circleci/node:13.8.0
+      # Docker image here
+    steps:
+      # Checkout code from git
+      # Restore from cache
+      # Your job code here
+      - checkout
+      - restore_cache:
+          keys: [testfrontend-build]
+      - run:
+          name: Front-end test
+          command: |
+             # Your code here
+             cd frontend
+             npm install
+             npm run test
+             exit 1
+      - save_cache:
+          paths: [frontend/node_modules]
+          key: testfrontend-build
 #                
-#  test-backend:
-#    docker:
-#      # Docker image here
-#    steps:
-#      # Checkout code from git
-#      # Restore from cache
-#      # Your job code here
+  test-backend:
+   docker:
+      - image: circleci/node:13.8.0
+      # Docker image here
+    steps:
+      # Checkout code from git
+      # Restore from cache
+      # Your job code here
+      - checkout
+      - restore_cache:
+          keys: [testbackend-build]
+      - run:
+          name: Back-end test
+          command: |
+             # Your code here
+             cd backend
+             npm install
+             npm run test
+             exit 1
+      - save_cache:
+          paths: [backend/node_modules]
+          key: testbackend-build
 #            
 #  scan-frontend:
 #    docker:
@@ -278,10 +304,10 @@ workflows:
     jobs:
       - build-frontend
       - build-backend
-    #  - test-frontend:
-    #      requires: [build-frontend]
-    #  - test-backend:
-    #      requires: [build-backend]
+      - test-frontend:
+          requires: [build-frontend]
+      - test-backend:
+          requires: [build-backend]
     #  - scan-backend:
     #      requires: [build-backend]
     #  - scan-frontend:
