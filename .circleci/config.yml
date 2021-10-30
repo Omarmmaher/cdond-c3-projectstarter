@@ -220,31 +220,31 @@ jobs:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
           when: on_fail
           
-  configure-infrastructure:
-    executor: python
-    steps:
-      - checkout
-      - add_ssh_keys:
-          fingerprints: ["62:68:8b:52:d1:65:79:84:15:3c:e4:8f:e7:b3:52:10"]
-      - attach_workspace:
-          at: .
-      - run:
-          name: Install dependencies
-          working_directory: ./.circleci/ansible
-          command: |
-            apk add --update ansible
-            ansible --version
-      - run:
-          name: Configure server
-          working_directory: ./.circleci/ansible
-          command: |
-            pwd &&
-            ls -la
-            cat inventory
-            ansible-playbook -i inventory configure-server.yml
-      - destroy_environment:
-          id: ${CIRCLE_WORKFLOW_ID:0:7}
-          when: on_fail
+#  configure-infrastructure:
+#    executor: python
+#    steps:
+#      - checkout
+#      - add_ssh_keys:
+#          fingerprints: ["62:68:8b:52:d1:65:79:84:15:3c:e4:8f:e7:b3:52:10"]
+#      - attach_workspace:
+#          at: .
+#      - run:
+#          name: Install dependencies
+#          working_directory: ./.circleci/ansible
+#          command: |
+#            apk add --update ansible
+#            ansible --version
+#      - run:
+#          name: Configure server
+#          working_directory: ./.circleci/ansible
+#          command: |
+#            pwd &&
+#            ls -la
+#            cat inventory
+#            ansible-playbook -i inventory configure-server.yml
+#      - destroy_environment:
+#          id: ${CIRCLE_WORKFLOW_ID:0:7}
+#          when: on_fail
 
 #  configure-infrastructure:
 #    docker:
@@ -392,7 +392,7 @@ workflows:
       - scan-frontend:
           requires: [build-frontend]
       - deploy-infrastructure:
-          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          requires: [test-frontend, test-backend]
           filters:
             branches:
               only: [master]
