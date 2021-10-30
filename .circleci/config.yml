@@ -48,7 +48,8 @@ jobs:
              # npm install
              # npm run build
              # npm audit fix --force
-             npm update
+             #npm update
+             npm audit fix
              exit 1
       - save_cache:
           paths: [frontend/node_modules]
