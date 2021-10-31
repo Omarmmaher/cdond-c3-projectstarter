@@ -221,7 +221,7 @@ jobs:
           
   configure-infrastructure:
     docker:
-     - image: python:3.9.0-alpine3.11
+     - image: python:3.9.0-alpine
     steps:
       - checkout
       - add_ssh_keys:
@@ -247,22 +247,42 @@ jobs:
           when: on_fail
     
 
-#  run-migrations:
-#    docker:
-#      # Docker image here that supports NodeJS
-#    steps:
-#      # Checkout code from git
-#      - run:
-#          name: Run migrations
-#          command: |
-#            # Your code here
-#            exit 1
-#      - run:
-#          name: Send migration results to memstash
-#          command: |
-#            # Your code here
-#            exit 1
-#     # Here's where you will add some code to rollback on failure      
+  run-migrations:
+    executor: node
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Install AWS CLI dependencies
+          working_directory: /tmp
+          command: |
+            sudo apt-get update && sudo apt-get install -yy less
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+      - run:
+          name: Run migrations
+          working_directory: ./backend
+          no_output_timeout: 30m
+          command: |
+            npm run migrations > migration_status
+      - run:
+          name: Send migration results to memstash
+          working_directory: ./backend
+          command: |
+            if grep -q "has been executed successfully" migration_status
+            then
+              echo "DB migration was successful, will update memstash..."
+              curl -H "Content-Type: text/plain" -H "token: 160a13c3-3528-40cc-af48-4368513fbd75" --request PUT --data "success" https://api.memstash.io/values/DB_MIGRATION_${CIRCLE_WORKFLOW_ID:0:7}
+            else
+              echo "DB migration failed, please verify setup! Probably the database already exists. Verify setup!"
+              curl -H "Content-Type: text/plain" -H "token: 160a13c3-3528-40cc-af48-4368513fbd75" --request PUT --data "failure" https://api.memstash.io/values/DB_MIGRATION_${CIRCLE_WORKFLOW_ID:0:7}
+            fi
+            echo "WorkflowID=${CIRCLE_WORKFLOW_ID:0:7}"
+      - destroy_environment:
+          id: ${CIRCLE_WORKFLOW_ID:0:7}
+          when: on_fail     
 #
 #  deploy-frontend:
 #    docker:
@@ -380,8 +400,8 @@ workflows:
               only: [master]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
-    #  - run-migrations:
-    #      requires: [configure-infrastructure]
+      - run-migrations:
+          requires: [configure-infrastructure]
     #  - deploy-frontend:
     #      requires: [run-migrations]
     #  - deploy-backend:
