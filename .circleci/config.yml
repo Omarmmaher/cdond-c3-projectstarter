@@ -276,21 +276,7 @@ jobs:
           working_directory: ./backend
           no_output_timeout: 30m
           command: |
-            cd ./backend 
-            npm install
-            touch .env
-            echo ENVIROMENT=$ENVIROMENT >> .env
-            echo TYPEORM_CONNECTION=$TYPEORM_CONNECTION >> .env
-            echo TYPEORM_MIGRATIONS_DIR=$TYPEORM_MIGRATIONS_DIR >> .env
-            echo TYPEORM_ENTITIES=$TYPEORM_ENTITIES >> .env
-            echo TYPEORM_MIGRATIONS=$TYPEORM_MIGRATIONS >> .env
-            echo TYPEORM_HOST=$TYPEORM_HOST >> .env
-            echo TYPEORM_PORT=$TYPEORM_PORT >> .env
-            echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> .env
-            echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> .env
-            echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> .env
-            npm run migrations > migrations_ouput.txt
-            cat migrations_ouput.txt
+            npm run migrations > migration_status
       - run:
           name: Send migration results to memstash
           working_directory: ./backend
@@ -306,44 +292,50 @@ jobs:
             echo "WorkflowID=${CIRCLE_WORKFLOW_ID:0:7}"
       - destroy_environment:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
-          when: on_fail     
-#
-  deploy-frontend:
-    executor: node
-    steps:
-      - checkout
-      - attach_workspace:
-          at: .
-      - run:
-          name: Install AWS CLI dependencies
-          working_directory: /tmp
-          command: |
-            sudo apt-get update && sudo apt-get install -yy less
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
-      - run:
-          name: Rebuild frontend with backend API Url
-          working_directory: ./frontend
-          command: |
-            export API_URL=$(curl -H "token: d5622cb1-8265-4b43-a16c-5b0b124c3dfe" --request GET https://api.memstash.io/values/BACKEND_URL)
-            echo "${API_URL}"
-            npm run build
-      - run:
-          name: Deploy frontend objects to S3
-          working_directory: ./frontend
-          command: |
-            aws s3 cp ./dist "s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}" --recursive
-      - persist_to_workspace:
-          root: .
-          paths:
-            - frontend/dist
-      - destroy_environment:
-          id: ${CIRCLE_WORKFLOW_ID:0:7}
           when: on_fail
-      - revert_migrations:
-          id: ${CIRCLE_WORKFLOW_ID:0:7}
-          when: on_fail
+
+#  deploy-frontend:
+#    executor: node
+#    steps:
+#      - checkout
+#      - attach_workspace:
+#          at: .
+#      - run:
+#          name: Install AWS CLI dependencies
+#          working_directory: /tmp
+#          command: |
+#            sudo apt-get update && sudo apt-get install -yy less
+#            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+#            unzip awscliv2.zip
+#            sudo ./aws/install
+#      - run:
+#          name: Rebuild frontend with backend API Url
+#          working_directory: ./frontend
+#          command: |
+#            export API_URL=$(curl -H "token: 160a13c3-3528-40cc-af48-4368513fbd75" --request GET https://api.memstash.io/values/BACKEND_URL)
+#            echo "${API_URL}"
+#            npm run build
+#      - run:
+#          name: copy the s3 url
+#          command: |
+#            echo "http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-east-1.amazonaws.com" > ./.circleci/ansible/URL02S3
+#      - store_artifacts: # See circleci.com/docs/2.0/artifacts/ for more details.
+#          path: .circleci/ansible/URL02S3      
+#      - run:
+#          name: Deploy frontend objects to S3
+#          working_directory: ./frontend
+#          command: |
+#            aws s3 cp ./dist "s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}" --recursive
+#      - persist_to_workspace:
+#          root: .
+#          paths:
+#            - frontend/dist
+#      - destroy_environment:
+#          id: ${CIRCLE_WORKFLOW_ID:0:7}
+#          when: on_fail
+#      - revert_migrations:
+#          id: ${CIRCLE_WORKFLOW_ID:0:7}
+#          when: on_fail
           
 #  deploy-frontend:
 #    docker:
