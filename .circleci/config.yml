@@ -405,6 +405,15 @@ jobs:
           command: |
             export BACKEND_URL=$(curl -H "token: 160a13c3-3528-40cc-af48-4368513fbd75" --request GET https://api.memstash.io/values/BACKEND_URL)
             curl "$BACKEND_URL/api/status"
+      - run:
+          name: Frontend smoke test.
+          command: |
+            if curl -s  "http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-west-2.amazonaws.com" | grep "Welcome"
+            then
+              return 1
+            else
+              return 1
+            fi
       - destroy_environment:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
           when: on_fail
