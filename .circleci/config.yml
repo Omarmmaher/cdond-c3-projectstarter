@@ -276,6 +276,7 @@ jobs:
           working_directory: ./backend
           no_output_timeout: 30m
           command: |
+            npm install
             npm run migrations > migration_status
       - run:
           name: Send migration results to memstash
