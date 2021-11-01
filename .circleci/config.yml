@@ -400,7 +400,7 @@ jobs:
             apk add --update curl nodejs npm
             pip install awscli
       - run:
-    name: Backend smoke test.
+           name: Backend smoke test.
            command: |
              export BACKEND_URL=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" --output text)
              echo http://${BACKEND_URL}:3030/api/status
