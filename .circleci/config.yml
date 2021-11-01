@@ -480,8 +480,6 @@ jobs:
 workflows:
   default:
     jobs:
-      - install-backend-dependencies
-      - install-frontend-dependencies  
       - build-frontend
       - build-backend
       - test-frontend:
