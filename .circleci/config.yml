@@ -405,6 +405,7 @@ jobs:
            command: |
              export BACKEND_URL=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" --output text)
              echo http://${BACKEND_URL}:3030/api/status
+             curl "http://${BACKEND_URL}:3030/api/status"
              if 
                curl -s http://${BACKEND_URL}:3030/api/status | grep "ok"
              then
@@ -480,6 +481,8 @@ jobs:
 workflows:
   default:
     jobs:
+      - install-backend-dependencies
+      - install-frontend-dependencies  
       - build-frontend
       - build-backend
       - test-frontend:
