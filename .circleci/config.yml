@@ -1,5 +1,4 @@
 version: 2.1
-
 orbs:
   slack: circleci/slack@4.3.0
 executors:
@@ -296,48 +295,45 @@ jobs:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
           when: on_fail
 
-#  deploy-frontend:
-#    executor: node
-#    steps:
-#      - checkout
-#      - attach_workspace:
-#          at: .
-#      - run:
-#          name: Install AWS CLI dependencies
-#          working_directory: /tmp
-#          command: |
-#            sudo apt-get update && sudo apt-get install -yy less
-#            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-#            unzip awscliv2.zip
-#            sudo ./aws/install
-#      - run:
-#          name: Rebuild frontend with backend API Url
-#          working_directory: ./frontend
-#          command: |
-#            export API_URL=$(curl -H "token: 160a13c3-3528-40cc-af48-4368513fbd75" --request GET https://api.memstash.io/values/BACKEND_URL)
-#            echo "${API_URL}"
-#            npm run build
-#      - run:
-#          name: copy the s3 url
-#          command: |
-#            echo "http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-east-1.amazonaws.com" > ./.circleci/ansible/URL02S3
-#      - store_artifacts: # See circleci.com/docs/2.0/artifacts/ for more details.
-#          path: .circleci/ansible/URL02S3      
-#      - run:
-#          name: Deploy frontend objects to S3
-#          working_directory: ./frontend
-#          command: |
-#            aws s3 cp ./dist "s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}" --recursive
-#      - persist_to_workspace:
-#          root: .
-#          paths:
-#            - frontend/dist
-#      - destroy_environment:
-#          id: ${CIRCLE_WORKFLOW_ID:0:7}
-#          when: on_fail
-#      - revert_migrations:
-#          id: ${CIRCLE_WORKFLOW_ID:0:7}
-#          when: on_fail
+  deploy-frontend:
+    executor: node
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Install AWS CLI dependencies
+          working_directory: /tmp
+          command: |
+            sudo apt-get update && sudo apt-get install -yy less
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+      - run:
+          name: Rebuild frontend with backend API Url
+          working_directory: ./frontend
+          command: |
+            export API_URL=$(curl -H "token: 160a13c3-3528-40cc-af48-4368513fbd75" --request GET https://api.memstash.io/values/BACKEND_URL)
+            echo "${API_URL}"
+            npm install
+            npm run build
+      - run:
+          name: Deploy frontend objects to S3
+          working_directory: ./frontend
+          command: |
+            aws s3 cp ./dist "s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}" --recursive
+      - persist_to_workspace:
+          root: .
+          paths:
+            - frontend/dist
+      - destroy_environment:
+          id: ${CIRCLE_WORKFLOW_ID:0:7}
+          when: on_fail
+      - revert_migrations:
+          id: ${CIRCLE_WORKFLOW_ID:0:7}
+          when: on_fail
+      
+  
           
 #  deploy-frontend:
 #    docker:
