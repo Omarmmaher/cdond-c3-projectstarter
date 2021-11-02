@@ -171,7 +171,7 @@ jobs:
       - run:
           name: Check Frontend against security vulnerabilities
           working_directory: ./frontend
-          command: npm audit --audit-level=critical  --force
+          command: npm audit fix --audit-level=critical  --force
 
 
   scan-backend:
@@ -507,9 +507,9 @@ workflows:
           requires:
             - deploy-backend
             - deploy-frontend
-      - cloudfront-update:
-          requires:
-            - smoke-test
-      - cleanup:
-          requires:
-            - cloudfront-update
+ #     - cloudfront-update:
+ #         requires:
+ #           - smoke-test
+ #     - cleanup:
+ #         requires:
+ #           - cloudfront-update
