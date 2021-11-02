@@ -187,7 +187,7 @@ jobs:
           command: npm audit  fix --audit-level=critical --force
       - slack/notify:
           event: fail
-          mentions: 'Ahmed Adel'
+          mentions: 'OMAR'
           template: basic_fail_1
       - slack/notify:
           event: pass
@@ -256,6 +256,13 @@ jobs:
           command: |
             apk add --update ansible
             ansible --version
+            apk add --no-cache \
+            python3 \
+            py3-pip \
+            && pip3 install --upgrade pip \
+            && pip3 install \
+            awscli \
+            && rm -rf /var/cache/apk/*
       - run:
           name: Configure server
           working_directory: ./.circleci/ansible
@@ -510,7 +517,6 @@ workflows:
           requires:
             - deploy-backend
             - deploy-frontend
-            
  #     - cloudfront-update:
  #         requires:
  #           - smoke-test
