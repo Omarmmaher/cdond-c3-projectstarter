@@ -7,7 +7,7 @@ executors:
       - image: circleci/node:13.8.0
   python:
     docker:
-      - image: python:3.9.0-alpine
+      - image: python:3.7-alpine3.11
   aws:
     docker:
       - image: amazon/aws-cli
@@ -256,13 +256,6 @@ jobs:
           command: |
             apk add --update ansible
             ansible --version
-            apk add --no-cache \
-            python3 \
-            py3-pip \
-            && pip3 install --upgrade pip \
-            && pip3 install \
-            awscli \
-            && rm -rf /var/cache/apk/*
       - run:
           name: Configure server
           working_directory: ./.circleci/ansible
@@ -270,6 +263,7 @@ jobs:
             pwd &&
             ls -la
             cat inventory.txt
+            export ANSIBLE_HOST_KEY_CHECKING=False
             ansible-playbook -i inventory.txt configure-server.yml
       - destroy_environment:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
