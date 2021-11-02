@@ -232,12 +232,12 @@ jobs:
             aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --filters "Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --output text >> inventory
-            cat inventory
+              --output text >> inventory.txt
+            cat inventory.txt
       - persist_to_workspace:
           root: .
           paths:
-            - .circleci/ansible/inventory
+            - .circleci/ansible/inventory.txt
       - destroy_environment:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
           when: on_fail
@@ -262,8 +262,8 @@ jobs:
           command: |
             pwd &&
             ls -la
-            cat inventory
-            ansible-playbook -i inventory configure-server.yml
+            cat inventory.txt
+            ansible-playbook -i inventory.txt configure-server.yml
       - destroy_environment:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
           when: on_fail
@@ -290,6 +290,8 @@ jobs:
           no_output_timeout: 30m
           command: |
             npm run migrations > migration_status
+            hostname
+            cat migration_status
       - run:
           name: Send migration results to memstash
           working_directory: ./backend
@@ -365,8 +367,8 @@ jobs:
           name: Deploy backend
           working_directory: ./.circleci/ansible
           command: |
-            cat inventory
-            ansible-playbook -i inventory deploy-backend.yml -vv
+            cat inventory.txt
+            ansible-playbook -i inventory.txt deploy-backend.yml -vv
       - destroy_environment:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
           when: on_fail
@@ -385,7 +387,7 @@ jobs:
           name: Install dependencies
           working_directory: /tmp
           command: |
-            apk add --update curl nodejs npm
+            apk add --update curl nodejs npm pm2
             pip install awscli
       - run:
           name: Backend smoke test.
