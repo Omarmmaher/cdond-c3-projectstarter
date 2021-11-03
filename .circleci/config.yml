@@ -215,7 +215,7 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints:
-            - "5c:b3:27:3d:cc:0f:7b:af:ce:20:cf:37:38:23:5c:5e"
+            - "55:db:91:73:ac:13:3f:f2:39:80:ab:e1:08:28:f1:2f"
       
       - run:
           name: Install dependencies
@@ -359,7 +359,7 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints:
-            - "5c:b3:27:3d:cc:0f:7b:af:ce:20:cf:37:38:23:5c:5e"
+            - "55:db:91:73:ac:13:3f:f2:39:80:ab:e1:08:28:f1:2f"
       - attach_workspace:
           at: .circleci/ansible/
       - store_artifacts: # See circleci.com/docs/2.0/artifacts/ for more details.
