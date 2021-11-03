@@ -283,12 +283,6 @@ jobs:
             echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> .env
             npm run migrations > migrations_ouput.txt
             cat migrations_ouput.txt
-            # npm install
-           
-            # npm audit fix --audit-level=critical --force
-            # touch dbmigrationresults
-            # npm run migrations >> dbmigrationresults
-            # cat dbmigrationresults
            
       - run:
           name: Send migration results to memstash
@@ -438,7 +432,7 @@ jobs:
           command: |
             if curl -s  "http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-east-1.amazonaws.com" | grep "Welcome"
             then
-              return 0
+              return 
             else
               return 1
             fi
@@ -469,9 +463,10 @@ jobs:
                     --template-file .circleci/files/cloudfront.yml \
                     --tags project=udapeople \
                     --stack-name udapeople-cloudfront-${CIRCLE_WORKFLOW_ID:0:7} \
-                    --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}"           
+                    --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}"
       - destroy-environment
       - revert-migrations
+
 
   cleanup:
       docker:
