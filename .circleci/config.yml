@@ -325,7 +325,8 @@ jobs:
             cd frontend
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
-            echo "API_URL=${API_URL}" >> .env
+            touch "frontend/.env"
+            echo "API_URL=${API_URL}" >> "frontend/.env"
             echo ENVIRONMENT=production >> "frontend/.env"
             echo NODE_ENV=production  >> "frontend/.env"
             npm install 
