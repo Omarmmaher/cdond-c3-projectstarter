@@ -2,13 +2,14 @@
 https://github.com/Omarmmaher/cdond-c3-projectstarter.git
 
 2) Public URL for your S3 Bucket (aka, your green candidate front-end) [URL02]
-http://udapeople-ec889dd.s3-website-us-east-1.amazonaws.com
+http://udapeople-ab2ce1f.s3-website-us-east-1.amazonaws.com
 
 3) Public URL for your CloudFront distribution (aka, your blue production front-end) [URL03]
-https://d10pnmrdnkvjf9.cloudfront.net
+https://d13e04uxglnr9u.cloudfront.net
 
 4)Public URLs to deployed application back-end in EC2 [URL04]
-http://ec2-34-226-140-110.compute-1.amazonaws.com:3030
+http://ec2-35-174-153-10.compute-1.amazonaws.com:3030
+http://35.174.153.10:3030
 
 5) Public URL to your Prometheus Server [URL05]
 http://ec2-54-92-193-85.compute-1.amazonaws.com:9090/targets
