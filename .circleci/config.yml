@@ -245,7 +245,6 @@ jobs:
             cat inventory.txt
             ansible-playbook -i inventory.txt configure-server.yml
             
-            
   
 
   # URLS=$(curl -H "token: 3869e8fb-542c-4fb8-b1e3-83d68f3a55d5" --request GET https://api.memstash.io/values/url_${CIRCLE_WORKFLOW_ID:0:7})
@@ -323,13 +322,13 @@ jobs:
             --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
             --output text)
             echo $BACKEND_IP > .circleci/ansible/backendip
-            cd frontend
+            cd ./frontend
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
             touch .env
-            echo "API_URL=${API_URL}" >> "frontend/.env"
-            echo ENVIRONMENT=production >> "frontend/.env"
-            echo NODE_ENV=production  >> "frontend/.env"
+            echo "API_URL=${API_URL}" >> .env
+            echo ENVIRONMENT=production >> .env
+            echo NODE_ENV=production  >> .env
             npm install 
             npm run build
       - persist_to_workspace:
